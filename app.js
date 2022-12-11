@@ -1,37 +1,61 @@
 // api key
 const ACCESS_KEY = 'r3WeSjY-hv9gyJE1Rw4h0L1FsTUsR3gO8PjPI2Jh-zY';
+const submitButton = document.getElementById('submit_button');
+const queryInput = document.getElementById('query');
+const photoList = document.getElementById('photo_list');
 
-// request photo
-document.getElementById('submit').addEventListener('click', function(e) {
+submitButton.addEventListener('click', requestPhotos);
+// handle enter
+queryInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        clearPhotos();
+        submitButton.click(); 
+    }
+})
 
-    // clear before
-    clearPhotos();
+// request photos
+let page = 1;
+function requestPhotos() {
+    // request
+    const query = queryInput.value;
 
-    const query = document.getElementById('query').value;
-
-    fetch(`https://api.unsplash.com/search/photos/?query=${query}&client_id=${ACCESS_KEY}`)
+    fetch(`https://api.unsplash.com/search/photos/?query=${query}&page=${page}&client_id=${ACCESS_KEY}`)
     .then(res => res.json())
     .then(json => {
         setPhotos(json.results);
     })
     .catch(err => console.error(err));
-
-});
+}
 
 
 // set photos
-const photoList = document.getElementById('photo_list');
-
 function setPhotos(photos) {
     photos.forEach(photo => {
         const photoTemplate = 
         `<div class="photo">
-            <img src="${photo.urls.full}" alt="${photo.urls.description}" width="50%" height="50%"></img>
+            <img 
+              src="${photo.urls.full}"
+              alt="${photo.urls.description}"
+              width="50%"
+              height="50%">
+            </img>
         </div>`;
+
         photoList.innerHTML += photoTemplate;
     });
 }
 
+// clear photo list
 function clearPhotos() {
     photoList.innerHTML = '';
+    page = 1;
 }
+
+// scroll event
+window.addEventListener('scroll', (e) => {
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+        ++page;
+        requestPhotos();
+     }
+});
