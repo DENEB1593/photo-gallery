@@ -3,19 +3,18 @@ const ACCESS_KEY = 'r3WeSjY-hv9gyJE1Rw4h0L1FsTUsR3gO8PjPI2Jh-zY';
 const submitButton = document.getElementById('submit_button');
 const queryInput = document.getElementById('query');
 const photoList = document.getElementById('photo_list');
+let page = 1;
 
 submitButton.addEventListener('click', requestPhotos);
-// handle enter
 queryInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         e.preventDefault();
-        clearPhotos();
         submitButton.click(); 
+        clearPhotos();
     }
 })
 
 // request photos
-let page = 1;
 function requestPhotos() {
     // request
     const query = queryInput.value;
